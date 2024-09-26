@@ -137,6 +137,35 @@ namespace osu.Game.Rulesets.Osu.Difficulty
 
         private double computeSpeedValue(ScoreInfo score, OsuDifficultyAttributes attributes)
         {
+              // This percentage only considers HitCircles of any value - in this part of the calculation we focus on hitting the timing hit window.
+            double betterAccuracyPercentage;
+            int amountHitObjectsWithAccuracy = attributes.HitCircleCount;
+
+            if (amountHitObjectsWithAccuracy > 0)
+                betterAccuracyPercentage = ((countGreat - (totalHits - amountHitObjectsWithAccuracy)) * 6 + countOk * 2 + countMeh) / (double)(amountHitObjectsWithAccuracy * 6);
+            else
+                betterAccuracyPercentage = 0;
+
+            // It is possible to reach a negative accuracy with this formula. Cap it at zero - zero points.
+            if (betterAccuracyPercentage < 0)
+                betterAccuracyPercentage = 0;
+
+            // Lots of arbitrary values from testing.
+            // Considering to use derivation from perfect accuracy in a probabilistic manner - assume normal distribution.
+            double accuracyValue = Math.Pow(1.52163, attributes.OverallDifficulty) * Math.Pow(betterAccuracyPercentage, 24) * 2.83;
+
+            // Bonus for many hitcircles - it's harder to keep good accuracy up for longer.
+            accuracyValue *= Math.Min(1.15, Math.Pow(amountHitObjectsWithAccuracy / 1000.0, 0.3));
+
+            // Increasing the accuracy value by object count for Blinds isn't ideal, so the minimum buff is given.
+            if (score.Mods.Any(m => m is OsuModBlinds))
+                accuracyValue *= 1.14;
+            else if (score.Mods.Any(m => m is OsuModHidden || m is OsuModTraceable))
+                accuracyValue *= 1.08;
+
+            if (score.Mods.Any(m => m is OsuModFlashlight))
+                accuracyValue *= 1.02;
+
             if (score.Mods.Any(h => h is OsuModRelax))
                 return 0.0;
 
@@ -177,49 +206,14 @@ namespace osu.Game.Rulesets.Osu.Difficulty
             double relevantAccuracy = attributes.SpeedNoteCount == 0 ? 0 : (relevantCountGreat * 6.0 + relevantCountOk * 2.0 + relevantCountMeh) / (attributes.SpeedNoteCount * 6.0);
 
             // Scale the speed value with accuracy and OD.
-            speedValue *= (0.95 + Math.Pow(attributes.OverallDifficulty, 2) / 750) * Math.Pow((accuracy + relevantAccuracy) / 2.0, (14.5 - Math.Max(attributes.OverallDifficulty, 8)) / 2);
+            speedValue *= (0.95 + Math.Pow(attributes.OverallDifficulty, 2.5) / 150) * Math.Pow(betterAccuracyPercentage, 4);
 
             // Scale the speed value with # of 50s to punish doubletapping.
             speedValue *= Math.Pow(0.99, countMeh < totalHits / 500.0 ? 0 : countMeh - totalHits / 500.0);
 
+            speedValue += accuracyValue
+
             return speedValue;
-        }
-
-        private double computeAccuracyValue(ScoreInfo score, OsuDifficultyAttributes attributes)
-        {
-            if (score.Mods.Any(h => h is OsuModRelax))
-                return 0.0;
-
-            // This percentage only considers HitCircles of any value - in this part of the calculation we focus on hitting the timing hit window.
-            double betterAccuracyPercentage;
-            int amountHitObjectsWithAccuracy = attributes.HitCircleCount;
-
-            if (amountHitObjectsWithAccuracy > 0)
-                betterAccuracyPercentage = ((countGreat - (totalHits - amountHitObjectsWithAccuracy)) * 6 + countOk * 2 + countMeh) / (double)(amountHitObjectsWithAccuracy * 6);
-            else
-                betterAccuracyPercentage = 0;
-
-            // It is possible to reach a negative accuracy with this formula. Cap it at zero - zero points.
-            if (betterAccuracyPercentage < 0)
-                betterAccuracyPercentage = 0;
-
-            // Lots of arbitrary values from testing.
-            // Considering to use derivation from perfect accuracy in a probabilistic manner - assume normal distribution.
-            double accuracyValue = Math.Pow(1.52163, attributes.OverallDifficulty) * Math.Pow(betterAccuracyPercentage, 24) * 2.83;
-
-            // Bonus for many hitcircles - it's harder to keep good accuracy up for longer.
-            accuracyValue *= Math.Min(1.15, Math.Pow(amountHitObjectsWithAccuracy / 1000.0, 0.3));
-
-            // Increasing the accuracy value by object count for Blinds isn't ideal, so the minimum buff is given.
-            if (score.Mods.Any(m => m is OsuModBlinds))
-                accuracyValue *= 1.14;
-            else if (score.Mods.Any(m => m is OsuModHidden || m is OsuModTraceable))
-                accuracyValue *= 1.08;
-
-            if (score.Mods.Any(m => m is OsuModFlashlight))
-                accuracyValue *= 1.02;
-
-            return accuracyValue;
         }
 
         private double computeFlashlightValue(ScoreInfo score, OsuDifficultyAttributes attributes)
