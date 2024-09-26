@@ -174,7 +174,6 @@ namespace osu.Game.Rulesets.Osu.Difficulty
             double relevantCountGreat = Math.Max(0, countGreat - relevantTotalDiff);
             double relevantCountOk = Math.Max(0, countOk - Math.Max(0, relevantTotalDiff - countGreat));
             double relevantCountMeh = Math.Max(0, countMeh - Math.Max(0, relevantTotalDiff - countGreat - countOk));
-            double relevantAccuracy = attributes.SpeedNoteCount == 0 ? 0 : (relevantCountGreat * 6.0 + relevantCountOk * 2.0 + relevantCountMeh) / (attributes.SpeedNoteCount * 6.0);
 
             double betterAccuracyPercentage;
             int amountHitObjectsWithAccuracy = attributes.HitCircleCount;
@@ -187,7 +186,6 @@ namespace osu.Game.Rulesets.Osu.Difficulty
             // It is possible to reach a negative accuracy with this formula. Cap it at zero - zero points.
             if (betterAccuracyPercentage < 0)
                 betterAccuracyPercentage = 0;
-
 
             // Scale the speed value with accuracy and OD.
             speedValue *= (0.95 + Math.Pow(attributes.OverallDifficulty, 2.5) / 150) * Math.Pow(betterAccuracyPercentage, 4);
