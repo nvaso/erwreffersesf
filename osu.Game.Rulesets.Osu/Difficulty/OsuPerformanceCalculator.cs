@@ -137,6 +137,8 @@ namespace osu.Game.Rulesets.Osu.Difficulty
 
         private double computeSpeedValue(ScoreInfo score, OsuDifficultyAttributes attributes)
         {
+            if (score.Mods.Any(h => h is OsuModRelax))
+                return 0.0;
 
             double speedValue = OsuStrainSkill.DifficultyToPerformance(attributes.SpeedDifficulty);
 
@@ -195,7 +197,7 @@ namespace osu.Game.Rulesets.Osu.Difficulty
 
             return speedValue;
         }
-        
+
         private double computeAccuracyValue(ScoreInfo score, OsuDifficultyAttributes attributes)
         {
             if (score.Mods.Any(h => h is OsuModRelax))
