@@ -174,13 +174,24 @@ namespace osu.Game.Rulesets.Osu.Difficulty
             double relevantCountMeh = Math.Max(0, countMeh - Math.Max(0, relevantTotalDiff - countGreat - countOk));
             double relevantAccuracy = attributes.SpeedNoteCount == 0 ? 0 : (relevantCountGreat * 6.0 + relevantCountOk * 2.0 + relevantCountMeh) / (attributes.SpeedNoteCount * 6.0);
 
+            double betterAccuracyPercentage;
+            int amountHitObjectsWithAccuracy = attributes.HitCircleCount;
+
+            if (amountHitObjectsWithAccuracy > 0)
+                betterAccuracyPercentage = ((countGreat - (totalHits - amountHitObjectsWithAccuracy)) * 6 + countOk * 2 + countMeh) / (double)(amountHitObjectsWithAccuracy * 6);
+            else
+                betterAccuracyPercentage = 0;
+
+            // It is possible to reach a negative accuracy with this formula. Cap it at zero - zero points.
+            if (betterAccuracyPercentage < 0)
+                betterAccuracyPercentage = 0;
+
+
             // Scale the speed value with accuracy and OD.
             speedValue *= (0.95 + Math.Pow(attributes.OverallDifficulty, 2.5) / 150) * Math.Pow(betterAccuracyPercentage, 4);
 
             // Scale the speed value with # of 50s to punish doubletapping.
             speedValue *= Math.Pow(0.99, countMeh < totalHits / 500.0 ? 0 : countMeh - totalHits / 500.0);
-
-            speedValue = speedValue + accuracyValue
 
             return speedValue;
         }
