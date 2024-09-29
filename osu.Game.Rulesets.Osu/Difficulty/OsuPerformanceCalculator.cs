@@ -132,6 +132,8 @@ namespace osu.Game.Rulesets.Osu.Difficulty
             // It is important to consider accuracy difficulty when scaling with accuracy.
             aimValue *= 0.98 + Math.Pow(attributes.OverallDifficulty, 2) / 2500;
 
+            aimValue *= 1.09
+
             return aimValue;
         }
 
@@ -174,24 +176,15 @@ namespace osu.Game.Rulesets.Osu.Difficulty
             double relevantCountGreat = Math.Max(0, countGreat - relevantTotalDiff);
             double relevantCountOk = Math.Max(0, countOk - Math.Max(0, relevantTotalDiff - countGreat));
             double relevantCountMeh = Math.Max(0, countMeh - Math.Max(0, relevantTotalDiff - countGreat - countOk));
-
-            double betterAccuracyPercentage;
-            int amountHitObjectsWithAccuracy = attributes.HitCircleCount;
-
-            if (amountHitObjectsWithAccuracy > 0)
-                betterAccuracyPercentage = ((countGreat - (totalHits - amountHitObjectsWithAccuracy)) * 6 + countOk * 2 + countMeh) / (double)(amountHitObjectsWithAccuracy * 6);
-            else
-                betterAccuracyPercentage = 0;
-
-            // It is possible to reach a negative accuracy with this formula. Cap it at zero - zero points.
-            if (betterAccuracyPercentage < 0)
-                betterAccuracyPercentage = 0;
+            double relevantAccuracy = attributes.SpeedNoteCount == 0 ? 0 : (relevantCountGreat * 6.0 + relevantCountOk * 2.0 + relevantCountMeh) / (attributes.SpeedNoteCount * 6.0);
 
             // Scale the speed value with accuracy and OD.
-            speedValue *= (0.95 + Math.Pow(attributes.OverallDifficulty, 2.5) / 1200) * Math.Pow(betterAccuracyPercentage - 0.001, 9);
+            speedValue *= (0.95 + Math.Pow(attributes.OverallDifficulty, 2) / 750) * Math.Pow((accuracy + relevantAccuracy) / 2.0, (14.5 - Math.Max(attributes.OverallDifficulty, 8)) / 2);
 
             // Scale the speed value with # of 50s to punish doubletapping.
             speedValue *= Math.Pow(0.99, countMeh < totalHits / 500.0 ? 0 : countMeh - totalHits / 500.0);
+
+            speedValue *= 0.98
 
             return speedValue;
         }
@@ -229,6 +222,8 @@ namespace osu.Game.Rulesets.Osu.Difficulty
 
             if (score.Mods.Any(m => m is OsuModFlashlight))
                 accuracyValue *= 1.02;
+
+            accuracyValue *= 0.92
 
             return accuracyValue;
         }
