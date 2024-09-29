@@ -184,7 +184,7 @@ namespace osu.Game.Rulesets.Osu.Difficulty
             // Scale the speed value with # of 50s to punish doubletapping.
             speedValue *= Math.Pow(0.99, countMeh < totalHits / 500.0 ? 0 : countMeh - totalHits / 500.0);
 
-            speedValue *= 0.9;
+            speedValue *= 0.94;
 
             return speedValue;
         }
@@ -223,7 +223,7 @@ namespace osu.Game.Rulesets.Osu.Difficulty
             if (score.Mods.Any(m => m is OsuModFlashlight))
                 accuracyValue *= 1.02;
 
-            accuracyValue *= 0.8;
+            accuracyValue *= 0.7;
 
             return accuracyValue;
         }
