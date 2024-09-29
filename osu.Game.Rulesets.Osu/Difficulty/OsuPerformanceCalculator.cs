@@ -10,9 +10,9 @@ using osu.Game.Rulesets.Osu.Mods;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Scoring;
 
-namespace osu.Game.Rulesets.Osu.Difficulty;
+namespace osu.Game.Rulesets.Osu.Difficulty
 {
-    public class OsuPerformanceCalculator : PerformanceCalculator;
+    public class OsuPerformanceCalculator : PerformanceCalculator
     {
         public const double PERFORMANCE_BASE_MULTIPLIER = 1.14; // This is being adjusted to keep the final pp value scaled around what it used to be when changing things.
 
@@ -132,7 +132,7 @@ namespace osu.Game.Rulesets.Osu.Difficulty;
             // It is important to consider accuracy difficulty when scaling with accuracy.
             aimValue *= 0.98 + Math.Pow(attributes.OverallDifficulty, 2) / 2500;
 
-            aimValue *= 1.09
+            aimValue *= 1.09;
 
             return aimValue;
         }
@@ -184,7 +184,7 @@ namespace osu.Game.Rulesets.Osu.Difficulty;
             // Scale the speed value with # of 50s to punish doubletapping.
             speedValue *= Math.Pow(0.99, countMeh < totalHits / 500.0 ? 0 : countMeh - totalHits / 500.0);
 
-            speedValue *= 0.98
+            speedValue *= 0.98;
 
             return speedValue;
         }
@@ -223,7 +223,7 @@ namespace osu.Game.Rulesets.Osu.Difficulty;
             if (score.Mods.Any(m => m is OsuModFlashlight))
                 accuracyValue *= 1.02;
 
-            accuracyValue *= 0.92
+            accuracyValue *= 0.92;
 
             return accuracyValue;
         }
