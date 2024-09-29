@@ -132,7 +132,7 @@ namespace osu.Game.Rulesets.Osu.Difficulty
             // It is important to consider accuracy difficulty when scaling with accuracy.
             aimValue *= 0.98 + Math.Pow(attributes.OverallDifficulty, 2) / 2500;
 
-            aimValue *= 1.09;
+            aimValue *= 1.15;
 
             return aimValue;
         }
@@ -184,7 +184,7 @@ namespace osu.Game.Rulesets.Osu.Difficulty
             // Scale the speed value with # of 50s to punish doubletapping.
             speedValue *= Math.Pow(0.99, countMeh < totalHits / 500.0 ? 0 : countMeh - totalHits / 500.0);
 
-            speedValue *= 0.98;
+            speedValue *= 0.9;
 
             return speedValue;
         }
@@ -223,7 +223,7 @@ namespace osu.Game.Rulesets.Osu.Difficulty
             if (score.Mods.Any(m => m is OsuModFlashlight))
                 accuracyValue *= 1.02;
 
-            accuracyValue *= 0.92;
+            accuracyValue *= 0.8;
 
             return accuracyValue;
         }
