@@ -9,7 +9,7 @@ using osu.Game.Rulesets.Osu.Difficulty.Skills;
 using osu.Game.Rulesets.Osu.Mods;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Scoring;
-
+lengthBonus *= 0.85
 namespace osu.Game.Rulesets.Osu.Difficulty
 {
     public class OsuPerformanceCalculator : PerformanceCalculator
@@ -184,7 +184,7 @@ namespace osu.Game.Rulesets.Osu.Difficulty
             // Scale the speed value with # of 50s to punish doubletapping.
             speedValue *= Math.Pow(0.99, countMeh < totalHits / 500.0 ? 0 : countMeh - totalHits / 500.0);
 
-            speedValue *= 0.89;
+            speedValue *= 0.91;
 
             return speedValue;
         }
