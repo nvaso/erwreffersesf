@@ -10,9 +10,9 @@ using osu.Game.Rulesets.Osu.Mods;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Scoring;
 
-namespace osu.Game.Rulesets.Osu.Difficulty
+namespace osu.Game.Rulesets.Osu.Difficulty;
 {
-    public class OsuPerformanceCalculator : PerformanceCalculator
+    public class OsuPerformanceCalculator : PerformanceCalculator;
     {
         public const double PERFORMANCE_BASE_MULTIPLIER = 1.14; // This is being adjusted to keep the final pp value scaled around what it used to be when changing things.
 
